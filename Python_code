@@ -9,9 +9,9 @@ import re
 
 
 ##### 2
-# Open Cary data (compiled.csv) and read in each line of data:
+# Open Cary data (cry_test_data.csv) and read in each line of data:
 
-with open("compiled.csv", 'r') as f:
+with open("cary_test_data.csv", 'r') as f:
     raw_data = f.readlines() 
     
   
