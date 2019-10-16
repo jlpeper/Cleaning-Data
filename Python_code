@@ -1,0 +1,104 @@
+##### 1
+# Import necessary packages:
+
+import numpy as np
+import datetime
+import pandas as pd 
+import re
+
+
+
+##### 2
+# Open Cary data (compiled.csv) and read in each line of data:
+
+with open("compiled.csv", 'r') as f:
+    raw_data = f.readlines() 
+    
+  
+ 
+##### 3 
+# Extract the name of each scan from the first line in of imported data (raw_data).
+# Store names in list, "names":
+
+names = raw_data[0].split(",")[::2]
+
+
+
+##### 4
+# Extract all the wavelength and absorbance values.
+# Store values in lists:
+
+column_wavelength = []
+values_absorance = []
+
+for row in raw_data[2:478]:
+    split_row = row.split(",")                      # Split raw data on commas
+    column_wavelength.append(int(split_row[0]))     # Create a list of wavelength values
+    absorbace = split_row[1::2]                     # Create a list of lists of absorbance values for each wavelength:
+    absorbance_float = []
+    for a in absorbace:
+        absorbance_float.append(float(a))       
+    values_absorance.append(absorbance_float)
+
+data_dict = dict(zip(column_wavelength, values_absorance))  # Store in dictionary with wavelength for keys and absorbance for values.
+
+
+
+##### 5
+# Extract collection time and date as strings from raw_data
+# Convert the strings to datetime objects and store in list "collection_datetime"
+# Determine the difference in minutes between each datetime object, store in list "delta_time"
+
+regex = re.compile("Collection Time: (.*M),*")
+collection_datetime = []
+
+for row in raw_data[478:]:
+    m = regex.match(row)
+    if m:
+        time = datetime.datetime.strptime(m.group(1), '%m/%d/%Y %I:%M:%S %p')
+        collection_datetime.append(time)
+    else:
+        continue
+
+delta_time = [(x-collection_datetime[0]).total_seconds()/60 for x in collection_datetime]
+
+
+
+##### 6
+# Create a dataframe (data_df) from the dictionary (data_dict):
+# Add data from names, collection_datetime, and delta_time lists as columns to the data frame.
+
+data_df = pd.DataFrame.from_dict(data_dict)
+data_df.insert(loc = 0, column = "name", value = names)
+data_df.insert(loc = 0, column = "collection_time", value = collection_datetime)
+data_df.insert(loc = 0, column = "delta_time_min", value = delta_time)
+
+
+
+
+##### 7
+# From data_df, write a csv file that includes a 2d array of delta_time and absorbance value data:
+
+time_vs_absorbance_array = data_df.drop(["name", "collection_time"], axis = 1).to_numpy()
+
+with open("Time_v_Absorbance.csv", 'w') as f2:
+    f2.write("Delta_Time_min" + ",")
+    for each in list(data_df.drop(["name", "collection_time"], axis = 1).columns)[1:]:
+        f2.write("A " + str(each) + " nm" + ',')
+    f2.write('\n')  
+    np.savetxt(f2, time_v_absorbance_array, delimiter= ",") 
+    
+    
+    
+##### 8    
+# From data_df, write a csv file that includes a 2d array of scan name and absorbance value data:
+    
+name_wavelength_df = data_df.drop(["delta_time_min", "collection_time"], axis = 1).set_index("name").transpose().reset_index()
+name_v_absorbance_array = name_wavelength_df.to_numpy()
+
+with open("name_v_Absorbance.csv", 'w') as f3:
+    f3.write("Wavelength_nm" + ",")
+    for name in list(name_wavelength_df.columns)[1:]:
+        f3.write(name + ',')
+    f3.write('\n') 
+    np.savetxt(f3, name_v_absorbance_array, delimiter= ",") 
