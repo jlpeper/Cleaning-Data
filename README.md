@@ -1,4 +1,5 @@
 # Cleaning-Data
-Extracts important information from messy Cary 5000 data.
-Python Code, Uses NumPy, Pandas, and regular expressions.
+Extracts important information from messy Cary 5000 data. /n
+Python Code/n
+Uses DateTime, NumPy, Pandas, and regular expressions.
 
