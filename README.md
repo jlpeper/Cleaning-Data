@@ -1,12 +1,8 @@
 # Cleaning-Data
-Extracts important information from messy Cary 5000 data. 
 
 Python Code: DateTime, NumPy, Pandas, and regular expressions.
 
-
-The provided code can be used to extract important data (scan name, datetime of measurements, absorbance, and wavelength) from Cary 5000 or Cary 60 csv data formats.
-
-This code demonstrates use of regular expressions, datetime, pandas, and numpy libraries.
+The provided code can be used to extract important data (scan name, datetime of measurements, absorbance, and wavelength) from Cary 5000 or Cary 60 csv data.
 
 # Step by step
 1. Import necessary packages.
